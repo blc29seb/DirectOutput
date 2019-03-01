@@ -369,7 +369,8 @@ namespace DirectOutput.Cab.Out.AdressableLedStrip
                 throw new Exception("The specified Com-Port '{0}' does not exist. Found the following Com-Ports: {1}. Will not send data to the controller.".Build(ComPortName, string.Join(", ", PortNames)));
             }
 
-            ComPort = new SerialPort();
+            //ComPort = new SerialPort();
+            ComPort = new SerialPort(ComPortName, 921600, Parity.None, 8, StopBits.One); // line code added for WEMOS D1 Mini PRO compatibility
             ComPort.ReadTimeout = ComPortTimeOutMs;
             ComPort.WriteTimeout = ComPortTimeOutMs;
 
@@ -385,6 +386,7 @@ namespace DirectOutput.Cab.Out.AdressableLedStrip
             try
             {
                 ComPort.Open();
+                Thread.Sleep(5000); // line code added for WEMOS D1 Mini PRO compatibility
             }
             catch (Exception E)
             {
@@ -402,7 +404,8 @@ namespace DirectOutput.Cab.Out.AdressableLedStrip
             {
 
                 ComPort.Write(new byte[] { 0 }, 0, 1);
-                Thread.Sleep(20);
+                //Thread.Sleep(20);
+                Thread.Sleep(200);  // line code modified for WEMOS D1 Mini PRO compatibility -> value was "20"
                 if (ComPort.BytesToRead > 0)
                 {
                     int Ret = ComPort.ReadByte();
